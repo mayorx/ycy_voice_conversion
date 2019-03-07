@@ -23,7 +23,7 @@ for singer in os.listdir(raw_dataset_dir):
         st = 0
         ed = sample.shape[0]
 
-        while st < ed:
+        while st + length < ed:
             part_path = os.path.join(target_singer_dir, '{:06}.wav'.format(part_id))
             librosa.output.write_wav(part_path, sample[st:st + length], sr)
 
