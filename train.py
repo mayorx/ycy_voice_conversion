@@ -63,12 +63,12 @@ for epoch in range(30):
                 print('epoch: {} ix: {} avg loss: {}'.format(epoch, ix, total_loss / 10), flush=True)
                 total_loss =  0.
 
-            if ix % 500 == 0:
+            if ix % 200 == 0:
                 print('input && output ... ')
                 print(float(input.mean()), float(input.min()), float(input.max()), flush=True)
                 print(float(output.mean()), float(output.min()), float(output.max()), flush=True)
                 # input_output_vis(input[0].detach().squeeze().cpu().numpy(), output[0].detach().squeeze().cpu().numpy(), 'epooch-{}-iter-{}.png'.format(epoch, ix))
-                input_output_vis(input[0].detach().squeeze().cpu().numpy(), output[0].detach().squeeze().cpu().numpy(), 'z-epooch-{:03}-iter-{:07}.png'.format(epoch, ix))
+                input_output_vis(input[0].detach().squeeze().cpu().numpy(), output[0].detach().squeeze().cpu().numpy(), 'z-epooch-{:03}-iter-{:07}'.format(epoch, ix))
 
 
 

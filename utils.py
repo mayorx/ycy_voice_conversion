@@ -15,5 +15,6 @@ def input_output_vis(input, output, file_name):
     fig, ax = plt.subplots()
     t = np.linspace(0., 1., input.shape[0])
     ax.plot(t, input, t, output)
-    plt.savefig(os.path.join(SAMPLE_VIS_DIR, file_name))
+    plt.savefig(os.path.join(SAMPLE_VIS_DIR, '{}.png'.format(file_name)))
     plt.clf()
+
