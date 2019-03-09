@@ -35,3 +35,6 @@ def load_checkpoint(encoder, generators, ckpt_name):
         generators[key].load_state_dict(torch.load(os.path.join(CKPT_DIR, 'generator-{}-{}.pth'.format(key, ckpt_name))))
     print('checkpoint loaded...')
     return encoder, generators
+
+def adjust_lr(init_lr, iter, total_iter):
+    return (1 - 1.0 * iter / total_iter) ** 0.9 * init_lr
