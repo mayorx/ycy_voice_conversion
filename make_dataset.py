@@ -1,5 +1,6 @@
 import os
 import librosa
+import numpy as np
 
 raw_dataset_dir = './raw_data'
 target_dataset_dir = '/home/cly/datacenter/songs/'
@@ -15,21 +16,31 @@ for singer in os.listdir(raw_dataset_dir):
         os.mkdir(target_singer_dir)
     except Exception:
         pass
-    part_id = 0
+
+    samples = np.array([])
     for song in os.listdir(singer_dir):
         song_path = os.path.join(singer_dir, song)
         sample, _ = librosa.load(song_path, sr)
+        samples = np.append(samples, sample)
 
-        st = 0
-        ed = sample.shape[0]
+    print('singer {}, samples {}'.format(singer, samples.shape))
+    samples.tofile(os.path.join(target_dataset_dir, '{}.dat'.format(singer)))
 
-        while st + length < ed:
-            part_path = os.path.join(target_singer_dir, '{:06}.wav'.format(part_id))
-            librosa.output.write_wav(part_path, sample[st:st + length], sr)
+    # part_id = 0
+    # for song in os.listdir(singer_dir):
+    #     song_path = os.path.join(singer_dir, song)
+    #     sample, _ = librosa.load(song_path, sr)
+    #
+    #     st = 0
+    #     ed = sample.shape[0]
+    #
+    #     while st + length < ed:
+    #         part_path = os.path.join(target_singer_dir, '{:06}.wav'.format(part_id))
+    #         librosa.output.write_wav(part_path, sample[st:st + length], sr)
+    #
+    #         st += length
+    #         part_id += 1
 
-            st += length
-            part_id += 1
-
-        print('working on singer: {}, song: {}, part_id: {}'.format(singer, song, part_id))
+        # print('working on singer: {}, song: {}, part_id: {}'.format(singer, song, part_id))
 
 
