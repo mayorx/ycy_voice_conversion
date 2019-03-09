@@ -10,7 +10,9 @@ from utils import *
 batch_size = 100
 init_lr = 1e-4
 total_iter = 10000
-ckpt_iter = 100
+ckpt_iter = 1000
+print_iter = 50
+visual_iter = 500
 
 # singers = ['dt', 'jj', 'eason']
 singers = ['jj']
@@ -62,16 +64,20 @@ for singer in singers:
         eoptim.step()
         goptim.step()
 
-        if (ix+1) % 10 == 0:
-            print('ix: {}/{} avg loss: {}'.format(ix, total_iter, total_loss / 10), flush=True)
+        if (ix+1) % print_iter == 0:
+            print('ix: {}/{}, lr: {}, avg loss: {}'.format(ix, total_iter, curr_lr, total_loss / 10), flush=True)
             total_loss =  0.
 
-        if ix % 200 == 0:
+        if ix % visual_iter == 0:
             print('input && output ... ')
             print(float(input.mean()), float(input.min()), float(input.max()), flush=True)
             print(float(output.mean()), float(output.min()), float(output.max()), flush=True)
             # input_output_vis(input[0].detach().squeeze().cpu().numpy(), output[0].detach().squeeze().cpu().numpy(), 'epooch-{}-iter-{}.png'.format(epoch, ix))
             input_output_vis(input[0].detach().squeeze().cpu().numpy(), output[0].detach().squeeze().cpu().numpy(), 'z-iter-{:07}'.format(ix))
+
+        if ix % ckpt_iter:
+            generators[singer] = generator
+            save_checkpoint(encoder, generators, 'iter-{:07}'.format(ix))
 
 
 
