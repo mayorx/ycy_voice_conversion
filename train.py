@@ -27,7 +27,7 @@ goptims = {}
 for singer in singers:
     generators[singer] = models.Generator(singer).to('cuda')
     ds = dataset.SongSegs(singer = singer)
-    loaders[singer] = torch.utils.data.DataLoader(ds, batch_size=batch_size, shuffle=False, num_workers=10)
+    loaders[singer] = torch.utils.data.DataLoader(ds, batch_size=batch_size, shuffle=True, num_workers=10)
     # goptims[singer] = optim.SGD(generators[singer].parameters(), lr=init_lr, momentum=0.9, weight_decay=5e-4)
     goptims[singer] = optim.Adam(generators[singer].parameters(), lr=init_lr, betas=(0.5, 0.999))
 
@@ -60,7 +60,7 @@ for epoch in range(30):
             goptims[singer].step()
 
             if (ix+1) % 10 == 0:
-                print('ix: {} avg loss: {}'.format(ix, total_loss / 10), flush=True)
+                print('epoch: {} ix: {} avg loss: {}'.format(epoch, ix, total_loss / 10), flush=True)
                 total_loss =  0.
 
             if ix % 500 == 0:
