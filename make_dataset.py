@@ -17,13 +17,13 @@ for singer in os.listdir(raw_dataset_dir):
     except Exception:
         pass
 
-    samples = np.array([])
+    samples = np.array([], dtype=np.float32)
     for song in os.listdir(singer_dir):
         song_path = os.path.join(singer_dir, song)
         sample, _ = librosa.load(song_path, sr)
         samples = np.append(samples, sample)
 
-    print('singer {}, samples {}'.format(singer, samples.shape))
+    print('singer {}, samples {}, mean {}, min {}, max {}'.format(singer, samples.shape, samples.mean(), samples.min(), samples.max()))
     samples.tofile(os.path.join(target_dataset_dir, '{}.dat'.format(singer)))
 
     # part_id = 0
