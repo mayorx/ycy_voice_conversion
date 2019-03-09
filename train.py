@@ -43,17 +43,15 @@ for epoch in range(30):
             input = input.to('cuda')
             code = encoder(input)
 
-            output = generators[singer](code)
+            output = generators[singer](code).squeeze(1)
             #want input == output
             # print('input size {} , output size {}'.format(input.size(), output.size()))
             loss = f.mse_loss(input, output) / batch_size / 1000
-
             # print('ix: {}, loss: {}'.format(ix, float(loss)))
             total_loss += float(loss)
 
             # print((input - output).shape)
             # print(((input - output) ** 2).shape)
-            # loss = ((input - output) ** 2) . sum() / batch_size / 1000
 
             goptims[singer].zero_grad()
             eoptim.zero_grad()
@@ -70,7 +68,7 @@ for epoch in range(30):
                 print(float(input.mean()), float(input.min()), float(input.max()), flush=True)
                 print(float(output.mean()), float(output.min()), float(output.max()), flush=True)
                 # input_output_vis(input[0].detach().squeeze().cpu().numpy(), output[0].detach().squeeze().cpu().numpy(), 'epooch-{}-iter-{}.png'.format(epoch, ix))
-                input_output_vis(input[0].detach().squeeze().cpu().numpy(), output[0].detach().squeeze().cpu().numpy(), 'epooch-{:02}-iter-{:07}.png'.format(epoch, ix))
+                input_output_vis(input[0].detach().squeeze().cpu().numpy(), output[0].detach().squeeze().cpu().numpy(), 'z-epooch-{:03}-iter-{:07}.png'.format(epoch, ix))
 
 
 
