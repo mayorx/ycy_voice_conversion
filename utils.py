@@ -32,7 +32,6 @@ def load_checkpoint(encoder, generators, ckpt_name):
     print('load checkpoint .... name:{}'.format(ckpt_name))
     encoder.load_state_dict(torch.load(os.path.join(CKPT_DIR, 'encoder-{}.pth'.format(ckpt_name))))
     for key in generators:
-        generators[key].load_state_dict(torch.load(os.path.join(CKPT_DIR, 'generator-{}-{}.pth'.format(key, ckpt_name)))
+        generators[key].load_state_dict(torch.load(os.path.join(CKPT_DIR, 'generator-{}-{}.pth'.format(key, ckpt_name))))
     print('checkpoint loaded...')
     return encoder, generators
-
