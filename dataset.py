@@ -5,7 +5,7 @@ import librosa
 import numpy as np
 
 DATASET_ROOT = '/home/cly/datacenter/songs'
-LENGTH = 1000
+LENGTH = 1024
 
 class SongSegs(torch.utils.data.Dataset):
 
