@@ -9,10 +9,11 @@ from utils import *
 
 batch_size = 512
 init_lr = 1e-4
-total_iter = 10000
+total_iter = 100001
 ckpt_iter = 1000
 print_iter = 50
 visual_iter = 500
+name = 'x-ae'
 
 # singers = ['dt', 'jj', 'eason']
 singers = ['jj']
@@ -73,11 +74,11 @@ for singer in singers:
             print(float(input.mean()), float(input.min()), float(input.max()), flush=True)
             print(float(output.mean()), float(output.min()), float(output.max()), flush=True)
             # input_output_vis(input[0].detach().squeeze().cpu().numpy(), output[0].detach().squeeze().cpu().numpy(), 'epooch-{}-iter-{}.png'.format(epoch, ix))
-            input_output_vis(input[0].detach().squeeze().cpu().numpy(), output[0].detach().squeeze().cpu().numpy(), 'ae-iter-{:07}'.format(ix))
+            input_output_vis(input[0].detach().squeeze().cpu().numpy(), output[0].detach().squeeze().cpu().numpy(), '{}-iter-{:07}'.format(name, ix))
 
         if ix % ckpt_iter == 0:
             generators[singer] = generator
-            save_checkpoint(encoder, generators, 'ae-iter-{:07}'.format(ix))
+            save_checkpoint(encoder, generators, '{}-iter-{:07}'.format(name, ix))
 
 
 
