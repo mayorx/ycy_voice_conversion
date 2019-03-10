@@ -127,6 +127,29 @@ class Generator(nn.Module):
         # x = nn.Tanh()(x)
         return x
 
-class Discriminator():
-    def __init__(self, singer):
-        pass
+class Discriminator(nn.Module):
+
+    def __init__(self, singer, dim=32):
+        super(Discriminator, self).__init__()
+        self.singer = singer
+
+        layers = []
+        layers.append(nn.Conv1d(1, dim, kernel_size=4, stride=2, padding=1))
+        layers.append(nn.LeakyReLU(0.01))
+        curr_dim = dim
+
+        for i in range(5):
+            layers.append(nn.Conv1d(curr_dim, 2 * curr_dim, kernel_size=4, stride=2, padding=1))
+            layers.append(nn.LeakyReLU(0.01))
+            curr_dim *= 2
+
+        layers.append(nn.Conv1d(curr_dim, 1, kernel_size=1, stride=1))
+        layers.append(nn.LeakyReLU(0.01))
+        layers.append(nn.AdaptiveAvgPool1d(1))
+        self.main = nn.Sequential(*layers)
+
+    def forward(self, input):
+        #batch_size * 1 * 1024
+        x = self.main(input).squeeze(2)
+        return x #size, batch_size * 1
+
