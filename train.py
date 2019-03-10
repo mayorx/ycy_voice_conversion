@@ -49,7 +49,7 @@ for singer in singers:
         input = input.to('cuda')
         code = encoder(input)
 
-        output = generators[singer](code).squeeze(1)
+        output = generators[singer](code)
         #want input == output
         # print('input size {} , output size {}'.format(input.size(), output.size()))
         loss = f.mse_loss(input, output) / batch_size / 1000

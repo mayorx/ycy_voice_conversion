@@ -125,7 +125,7 @@ class Generator(nn.Module):
         x = self.layer3(x)
         # print('G .. layer3', x.size())
         # x = nn.Tanh()(x)
-        return x
+        return x.squeeze(1)
 
 class Discriminator(nn.Module):
 
