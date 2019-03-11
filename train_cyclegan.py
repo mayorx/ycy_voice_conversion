@@ -19,7 +19,7 @@ LAM = 10.
 BALANCE = 1.
 
 device = 'cuda' #'cpu'
-name = 'cyclegan-test-L1'
+name = 'cyclegan-test-regular-loss'
 
 A = 'jj'
 B = 'eason'
@@ -47,8 +47,15 @@ def calc_cycle_loss(batch_x, rec_x):
     # return f.mse_loss(batch_x, rec_x) / batch_x.size(0) / batch_x.size(1)
 
 #maximize delta
-def calc_gan_loss(delta):
-    return -torch.log(torch.sigmoid(delta)).mean()
+# def calc_gan_loss(delta):
+#     return -torch.log(torch.sigmoid(delta)).mean()
+
+def calc_gan_loss(pred, is_one=True):
+    if is_one:
+        target = torch.ones(pred.size()).to(device)
+    else:
+        target = torch.zeros(pred.size()).to(device)
+    return f.binary_cross_entropy_with_logits(pred, target, size_average=True)
 
 for ix in range(total_iter):
     curr_lr = adjust_lr(init_lr, ix, total_iter)
@@ -70,14 +77,24 @@ for ix in range(total_iter):
     pred_real_b = D_b(batch_b)
 
     #calc G loss...
-    gan_loss = calc_gan_loss(pred_fake_a - pred_real_a) + calc_gan_loss(pred_fake_b - pred_real_b)
+    # gan_loss = calc_gan_loss(pred_fake_a - pred_real_a) + calc_gan_loss(pred_fake_b - pred_real_b)
+    gan_loss = calc_gan_loss(pred_fake_a, True) + calc_gan_loss(pred_fake_b, True)
     cycle_loss = LAM * (calc_cycle_loss(batch_a, rec_a) + calc_cycle_loss(batch_b, rec_b))
     G_loss = gan_loss + cycle_loss
 
     #calc D loss...
-    D_loss = calc_gan_loss(pred_real_a - pred_fake_a) + calc_gan_loss(pred_real_b - pred_fake_b)
+    D_a_loss = calc_gan_loss(pred_real_a, True) + calc_gan_loss(pred_fake_a, False)
+    D_b_loss = calc_gan_loss(pred_real_b, True) + calc_gan_loss(pred_fake_b, False)
+    D_loss = 0.5 * (D_a_loss + D_b_loss)
 
-    loss = G_loss + BALANCE * D_loss
+    # D_loss = calc_gan_loss(pred_real_a, True) + calc_gan_loss(pred_fake_b, 0)
+    # D_loss = calc_gan_loss(pred_real_a - pred_fake_a) + calc_gan_loss(pred_real_b - pred_fake_b)
+
+
+    if ix % 2 == 0:
+        loss = G_loss
+    else:
+        loss = D_loss
 
     # print('G: gan loss {}, cycle_loss {}'.format(float(gan_loss), float(cycle_loss)))
     # print('D: gan loss {}'.format(float(D_loss)))
@@ -91,7 +108,10 @@ for ix in range(total_iter):
     G_optim.step()
 
     if ix % 10 == 0:
-        print('ix: [{}/{}] G: gan {:.4f}, cycle {:.4f}, total {:.4f}, D: total {:.4f}'.format(ix, total_iter, float(gan_loss), float(cycle_loss), float(G_loss), float(D_loss)))
+        print('ix: [{}/{}]'
+              '\n\tG: gan {:.4f}, cycle {:.4f}, total {:.4f}'
+              '\n\tD: D_a {:.4f}, D_b {:.4f} total {:.4f}'
+              .format(ix, total_iter, float(gan_loss), float(cycle_loss), float(G_loss), float(D_a_loss), float(D_b_loss), float(D_loss)))
 
     if ix % eval_iter == 0:
         eval.eval_file('./raw_data/jj/林俊杰 - 江南.flac', 'results/jj-to-eason-{}-{}.wav'.format(name, ix), encoder=E, geneator=G_a)
