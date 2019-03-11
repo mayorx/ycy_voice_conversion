@@ -149,6 +149,7 @@ class Discriminator(nn.Module):
         self.main = nn.Sequential(*layers)
 
     def forward(self, input):
+        input = input.unsqueeze(1)
         #batch_size * 1 * 1024
         x = self.main(input).squeeze(2)
         return x #size, batch_size * 1
