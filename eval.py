@@ -3,9 +3,10 @@ import utils
 import models_conv as models
 import torch
 
+SAMPLE_LENGTH_LIMIT = 700000
+
 def generate_voice_conversion(samples, encoder, generator):
     input = torch.from_numpy(samples)
-    print('input size', input.size())
     input = input.unsqueeze(0).to('cuda')
     code = encoder(input)
     output = generator(code).squeeze().detach().cpu().numpy()
@@ -13,11 +14,17 @@ def generate_voice_conversion(samples, encoder, generator):
 
 
 def eval_file(in_file, out_file, encoder, geneator, vis=True):
+    print('eval .. {} to {}'.format(in_file, out_file))
     samples, _ = librosa.load(in_file, 20000)
+    if len(samples) > 2 * SAMPLE_LENGTH_LIMIT:
+        print('length limit .. {} seconds.'.format(SAMPLE_LENGTH_LIMIT / 20000))
+        samples = samples[SAMPLE_LENGTH_LIMIT: SAMPLE_LENGTH_LIMIT + SAMPLE_LENGTH_LIMIT]
+        print('.... cutted.')
     output = generate_voice_conversion(samples, encoder, geneator)
     librosa.output.write_wav(out_file, output, 20000)
     if vis:
         utils.input_output_vis(samples, output, 'eval')
+    print('eval finished.')
 
 if __name__ == '__main__':
     singers = ['jj']
