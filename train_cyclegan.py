@@ -19,10 +19,10 @@ LAM = 10.
 BALANCE = 1.
 
 device = 'cuda' #'cpu'
-name = 'cyclegan-test-cycle-mse-gan-mse-D-multi-cnt'
+name = 'cyclegan-with-strongD'
 
 A = 'jj'
-B = 'dt'
+B = 'jay'
 
 
 # singers = ['jj', 'eason']
@@ -101,7 +101,6 @@ for ix in range(total_iter):
     G_optim.zero_grad()
     G_loss.backward()
     G_optim.step()
-
 
 
     # batch_b == G_a(E(batch_b))
